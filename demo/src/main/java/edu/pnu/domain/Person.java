@@ -1,5 +1,16 @@
 package edu.pnu.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor // 빈 생성자
 public class Person {
 	
 	private String name;
@@ -7,21 +18,20 @@ public class Person {
 	private String job;
 	private String hobby;
 
+/*
 	public Person() {
 	}
 	
-	
-
-	public String getName() {
-		return name;
-	}
-
 	public Person(String name, int year, String job, String hobby) {
 		super();
 		this.name = name;
 		this.year = year;
 		this.job = job;
 		this.hobby = hobby;
+	}
+	
+	public String getName() {
+		return name;
 	}
 
 	public void setName(String name) {
@@ -52,4 +62,5 @@ public class Person {
 		this.hobby = hobby;
 	}
 	
+*/
 }
