@@ -41,14 +41,10 @@ public class MemberService {
 		int id = list.size()+1;
 		String pass = member.getPass();
 		String name = member.getName();
-		Date regidate = new Date();
-		MemberVO m = new MemberVO();
-		m.setId(id);
-		m.setPass(pass);
-		m.setName(name);
-		m.setRegidate(regidate);
-		list.add(member);
-		return member;
+		//Date regidate = new Date();
+		MemberVO m = new MemberVO(id, pass, name, new Date());
+		list.add(m);
+		return m;
 	}
 	
 	public MemberVO updateMembers(MemberVO member) {
@@ -56,7 +52,7 @@ public class MemberService {
 			if(m.getId() == member.getId()) {
 				m.setName(member.getName());
 				m.setPass(member.getPass());
-				return m;
+				//return m;
 			}
 		}
 		

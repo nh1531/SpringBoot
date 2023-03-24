@@ -43,7 +43,7 @@ public class MemberController {
 	@PostMapping("/member")
 	public MemberVO addMember(MemberVO member) {
 		System.out.println(member); //toString 있어야 보임
-		return null;
+		return memberService.addMember(member);
 	}
 	
 	// 수정 대상 객체 정보를 전달, 수정된 객체를 출력
