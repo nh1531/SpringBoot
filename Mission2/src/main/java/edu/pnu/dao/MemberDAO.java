@@ -9,8 +9,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
 import edu.pnu.domain.MemberVO;
 
+@Repository
 public class MemberDAO {
 	public Connection con;
 	public Statement stmt;
@@ -98,26 +101,72 @@ public class MemberDAO {
 	}
 
 	public MemberVO addMember(MemberVO member) {
-		String query = "INSERT INTO member(id,pass,name) VALUES(?,?,?)";
+		String query = String.format("INSERT INTO member(pass,name) VALUES('%s','%s')",member.getPass(), member.getName());
 		System.out.println("query" + query);
-		MemberVO m = null;
 		try {
 			stmt = con.createStatement();
-			rs = stmt.executeQuery(query);
-			rs.next();
-			
-			m = new MemberVO();
-			m.setId(rs.getInt("id"));
-			m.setPass(rs.getString("pass"));
-			m.setName(rs.getString("name"));
-			m.setRegidate(new Date());
-			psmt.executeUpdate();
+			stmt.executeUpdate(query);
 		}
 		catch (Exception e) {
 			System.out.println("멤버 추가 중 예외 발생");
 			e.printStackTrace();
 		}
-		return m;
+		// 현재 테이블에서 max값을 가져옴->getMember()로 select 호출
+		return getMember(getMaxId());
+	}
+
+	private Integer getMaxId() {
+		// 최대값을 찾아서 return
+		String query = "SELECT max(id) FROM MEMBER";
+		try {
+			// 질의 객체 생성
+			stmt = con.createStatement();
+			// 질의 및 질의 결과 가져오기
+			rs = stmt.executeQuery(query);
+			// rs(resultset)의 다음 레코드로 이동
+			rs.next();
+			return rs.getInt(1);
+		}
+		catch (Exception e) {
+			System.out.println("게시물 조회 중 예외 발생");
+			e.printStackTrace();
+		}
+		return 0; // Result 반환	
 	}	
+	
+	public MemberVO updateMembers(MemberVO member) {
+		String query = "UPDATE member SET pass=?,name=? where id=?";
+		System.out.println(query + "query");
+		
+		try {
+			psmt = con.prepareStatement(query);
+			psmt.setString(1, member.getPass());
+			psmt.setString(2, member.getName());
+			psmt.setInt(3, member.getId());
+			psmt.executeUpdate();
+		}
+		catch(Exception e) {
+			System.out.println("수정 중 예외 발생");
+			e.printStackTrace();
+		}
+		return member;
+	}
+	
+	public MemberVO removeMember(Integer id) {
+		String query = "delete from member where id=?";
+		System.out.println(query + "query");
+		try {
+			psmt = con.prepareStatement(query);
+			psmt.setInt(1, id);
+			psmt.executeUpdate();
+		}
+		catch(Exception e) {
+			System.out.println("삭제 중 예외 발생");
+			e.printStackTrace();
+		}
+		return null ;
+	}
+	
+	
 	
 }

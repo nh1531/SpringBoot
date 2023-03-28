@@ -33,28 +33,10 @@ public class MemberService {
 	}
 	
 	public MemberVO updateMembers(MemberVO member) {
-//		for (MemberVO m : list) {
-//			if(m.getId() == member.getId()) {
-//				m.setName(member.getName());
-//				m.setPass(member.getPass());
-//				//return m;
-//			}
-//		}
-		
-		//MemberVO m = getMember(member.getId());
-		//if(m != null) {
-		//}
-		return null;
+		return memberDAO.updateMembers(member);
 	}
 	
 	public MemberVO removeMember(Integer id) {
-//		for (MemberVO m : list) {
-//			if(m.getId() == id) {
-//				list.remove(m);
-//				return m;
-//			}
-//		}
-		return null;
+		return memberDAO.removeMember(id);
 	}
-
 }

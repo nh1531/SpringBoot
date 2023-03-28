@@ -2,6 +2,8 @@ package edu.pnu.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,11 +21,22 @@ public class MemberController {
 	
 	MemberService memberService = new MemberService();
 	
+	private static final Logger log = LoggerFactory.getLogger(MemberController.class); // 메시지를 보여줄 class 이름
+	
 	// loggerFactory , lombok @Slf4j 없이 사용
 	//private static 
 	
-	public MemberController() {
-		System.out.println("===> MemberController 생성");
+	public MemberController(MemberService memberService) {
+		//System.out.println("===> MemberController 생성");
+		log.info("MemberController 생성자 호출");
+		
+		log.error("Error Message 입니다.");
+		log.warn("Warn Message 입니다.");
+		log.info("Info Message 입니다.");
+		log.debug("Debug Message 입니다.");
+		log.trace("Trace Message 입니다.");
+		
+		this.memberService = memberService;
 	}
 	
 	// 모든 멤버 정보를 json 형태로 브라우저에 출력

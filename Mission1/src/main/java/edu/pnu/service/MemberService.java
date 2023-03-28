@@ -52,14 +52,13 @@ public class MemberService {
 			if(m.getId() == member.getId()) {
 				m.setName(member.getName());
 				m.setPass(member.getPass());
-				//return m;
+				return m;
 			}
 		}
-		
 		//MemberVO m = getMember(member.getId());
 		//if(m != null) {
 		//}
-		return null;
+		return member;
 	}
 	
 	public MemberVO removeMember(Integer id) {
