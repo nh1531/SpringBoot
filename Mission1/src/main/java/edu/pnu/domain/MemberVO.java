@@ -2,28 +2,17 @@ package edu.pnu.domain;
 
 import java.util.Date;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-//@Getter
-//@Setter
-//@ToString
-//@AllArgsConstructor
-//@NoArgsConstructor
 public class MemberVO {
-	private int id;
-	private String pass;
-	private String name;
-	private Date regidate;
-	
-	public MemberVO(){
+    private int id;
+    private String pass;
+    private String name;
+    private Date regidate;
+
+    public MemberVO() {
+		// TODO Auto-generated constructor stub
 	}
 
 	public MemberVO(int id, String pass, String name, Date regidate) {
-		super();
 		this.id = id;
 		this.pass = pass;
 		this.name = name;
@@ -65,8 +54,5 @@ public class MemberVO {
 	@Override
 	public String toString() {
 		return "MemberVO [id=" + id + ", pass=" + pass + ", name=" + name + ", regidate=" + regidate + "]";
-	}
-	
-	
-
+	}    
 }
