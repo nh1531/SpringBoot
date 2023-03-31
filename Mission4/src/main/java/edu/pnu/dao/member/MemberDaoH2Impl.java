@@ -11,8 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import edu.pnu.dao.log.LogDao;
-import edu.pnu.domain.LogVO;
 import edu.pnu.domain.MemberVO;
 
 public class MemberDaoH2Impl implements MemberInterface {
@@ -60,8 +58,8 @@ public class MemberDaoH2Impl implements MemberInterface {
 		} 
 		finally {
 			try {
-				if (rs != null) rs.close();
-				if (st != null) st.close();
+				rs.close();
+				st.close();
 			} 
 			catch (Exception e) {
 				e.printStackTrace();
@@ -71,9 +69,11 @@ public class MemberDaoH2Impl implements MemberInterface {
 	}
 
 	@Override
-	public MemberVO getMember(Integer id) {
+	public Map<String, Object> getMember(Integer id) {
+		Map<String, Object> map = new HashMap<>();
 		try {
-			ps = con.prepareStatement("select * from member where id=?");
+			String sqlstr = "select * from member where id=?";
+			ps = con.prepareStatement(sqlstr);
 			ps.setInt(1, id);
 			rs = ps.executeQuery();
 			rs.next();
@@ -83,38 +83,40 @@ public class MemberDaoH2Impl implements MemberInterface {
 			m.setPass(rs.getString("pass"));
 			m.setName(rs.getString("name"));
 			m.setRegidate(rs.getDate("regidate"));
-			return m;
-			
-			
+
+			map.put("result", m);
+			map.put("msg", sqlstr);
 		}
 		catch(Exception e){
 			System.out.println("member 1명 조회 에러");
 			e.printStackTrace();
+			map.put("result", null);
+			map.put("msg", e.getMessage());
 		}
 		finally {
 			try {
-				rs.close();
-				ps.close();
+				if(rs != null) rs.close();
+				if(st != null) ps.close();
 			}
 			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		return null;
+		return map;
 	}
 
 	@Override
-	public MemberVO addMember(MemberVO member) {
+	public Map<String, Object> addMember(MemberVO member) {
+		Map<String, Object> map = new HashMap<>();
+	
 		try {
 			int id = getNextId();
-			ps = con.prepareStatement("insert into member(id,pass,name,regidate) values(?,?,?,?)");
-			ps.setInt(1, id);
-			ps.setString(2, member.getPass());
-			ps.setString(3, member.getName());
-			ps.setDate(4, new Date(System.currentTimeMillis()));
-			ps.executeUpdate();
+			String query = String.format("insert into member(id,pass,name) values(%d,'%s','%s')", id,member.getPass(),member.getName());
+			st = con.createStatement();
+			st.executeUpdate(query);
 			
-			return getMember(id);
+			map.put("result", getMember(id));
+			map.put("msg", query);
 		}
 		catch(Exception e){
 			System.out.println("member 추가 에러");
@@ -163,7 +165,7 @@ public class MemberDaoH2Impl implements MemberInterface {
 			ps.setInt(3, member.getId());
 			ps.executeUpdate();
 			
-			return getMember(member.getId());
+			//return getMember(member.getId());
 		}
 		catch(Exception e){
 			System.out.println("member 변경 에러");

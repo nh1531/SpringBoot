@@ -30,11 +30,12 @@ public class LogDaoH2Impl implements LogDao{
 	public void addLog(String method, String sql, boolean success) {
 		try {
 			ps = con.prepareStatement("insert into dblog(method,sqlstring,success) values(?,?,?)");
-			ps.setString(1, "method");
-			ps.setString(2, "sql");
-			ps.setString(3, "success");
+			ps.setString(1, method);
+			ps.setString(2, sql);
+			ps.setBoolean(3, success);
 			
 			ps.executeUpdate();
+			
 		}
 		catch(Exception e){
 			System.out.println("log 추가 에러");
@@ -42,8 +43,8 @@ public class LogDaoH2Impl implements LogDao{
 		}
 		finally {
 			try {
-				rs.close();
-				ps.close();
+				if (rs != null) rs.close();
+				if (ps != null) ps.close();
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -53,8 +54,8 @@ public class LogDaoH2Impl implements LogDao{
 	}
 
 	@Override
-	public void addLog(String method, String msg, List<MemberVO> list) {
-		addLog(method, msg, list!=null?true:false);
+	public void addLog(String method, String msg, Object obj) {
+		addLog(method, msg, obj!=null?true:false);
 	}
 	
 	

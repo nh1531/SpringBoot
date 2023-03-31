@@ -25,20 +25,34 @@ public class MemberService {
 		Map<String, Object> map = memberDao.getMembers();
 		
 		@SuppressWarnings("unchecked")
-		List<MemberVO> list = (List<MemberVO>)map.get("data");
+		List<MemberVO> list = (List<MemberVO>)map.get("result");
 		String msg = (String)map.get("msg");
 		
-		logDao.addLog("Get",  msg,  list);
+		logDao.addLog("get",  msg,  list);
 		
 		return list;
 	}	
 	
 	public MemberVO getMember(Integer id) {
-		return memberDao.getMember(id);
+		Map<String, Object> map = memberDao.getMember(id);
+		
+		MemberVO member = (MemberVO)map.get("result");
+		String msg = (String) map.get("msg");
+		
+		logDao.addLog("get", msg, member);
+		
+		return member;
 	}
 
 	public MemberVO addMember(MemberVO member) {
-		return memberDao.addMember(member);
+		Map<String, Object> map = memberDao.addMember(member);
+		
+		MemberVO mem = (MemberVO) map.get("result");
+		String msg = (String)map.get("msg");
+		
+		logDao.addLog("put", msg, mem);
+		
+		return mem;
 	}
 
 	public MemberVO updateMember(MemberVO member) {

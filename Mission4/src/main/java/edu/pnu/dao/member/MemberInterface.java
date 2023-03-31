@@ -9,9 +9,9 @@ public interface MemberInterface {
 
 	Map<String, Object> getMembers();
 
-	MemberVO getMember(Integer id);
+	Map<String, Object> getMember(Integer id);
 
-	MemberVO addMember(MemberVO member);
+	Map<String, Object> addMember(MemberVO member);
 
 	MemberVO updateMember(MemberVO member);
 

@@ -9,7 +9,7 @@ public interface LogDao {
 
 	void addLog(String method, String sql, boolean success);
 
-	void addLog(String method, String msg, List<MemberVO> list);
+	void addLog(String method, String msg, Object obj);
 	
 }
 
