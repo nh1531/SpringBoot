@@ -1,12 +1,13 @@
 package edu.pnu.dao.member;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,169 +15,134 @@ import java.util.Map;
 import edu.pnu.domain.MemberVO;
 
 public class MemberDaoH2Impl implements MemberInterface {
-	public Connection con;
-	public Statement st;
-	public PreparedStatement ps;
-	public ResultSet rs;
-
+	private Connection con = null;
+	
 	public MemberDaoH2Impl() {
-		try {
-			Class.forName("org.h2.Driver");
-			con = DriverManager.getConnection("jdbc:h2:tcp://localhost/~/springboot", "sa", "");
-			System.out.println("DB 연결 성공(기본 생성자)");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        try {
+            // JDBC 드라이버 로드
+            Class.forName("org.h2.Driver");
+            
+            con = DriverManager.getConnection("jdbc:h2:tcp://localhost/~/springboot", "sa", "");
+        }
+        catch (Exception e) {            
+            e.printStackTrace();
+        }
 	}
-
+	
 	@Override
 	public Map<String, Object> getMembers() {
-		Map<String,Object> map = new HashMap<>();
-		List<MemberVO> list = new ArrayList<>();
+		Statement st = null;
+		ResultSet rs = null;
+		String sqlString = "select * from member order by id asc";
 		try {
+			List<MemberVO> list = new ArrayList<>();
 			st = con.createStatement();
-			
-			String sqlstr = "select * from member order by id asc";
-			
-			rs = st.executeQuery(sqlstr);
-			while (rs.next()) {
+			rs = st.executeQuery(sqlString);
+			while(rs.next() ) {
 				MemberVO m = new MemberVO();
 				m.setId(rs.getInt("id"));
 				m.setPass(rs.getString("pass"));
-				m.setName(rs.getString("pass"));
+				m.setName(rs.getString("name"));
 				m.setRegidate(rs.getDate("regidate"));
 				list.add(m);
 			}
-			map.put("result", list);
-			map.put("msg", sqlstr);
-		} 
-		catch (Exception e) {
-			System.out.println("member 조회 에러");
+			Map<String, Object> map = new HashMap<>();
+			map.put("sql", sqlString);
+			map.put("data", list);
+			return map;
+		} catch (Exception e) {
 			e.printStackTrace();
-			map.put("result", null);
-			map.put("msg", e.getMessage());
-		} 
-		finally {
+		} finally {
 			try {
-				rs.close();
-				st.close();
-			} 
-			catch (Exception e) {
+				if (rs != null)	rs.close();
+				if (st != null)	st.close();
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
-		return map;
+		return null;
 	}
 
 	@Override
 	public Map<String, Object> getMember(Integer id) {
-		Map<String, Object> map = new HashMap<>();
+		Statement st = null;
+		ResultSet rs = null;
 		try {
-			String sqlstr = "select * from member where id=?";
-			ps = con.prepareStatement(sqlstr);
-			ps.setInt(1, id);
-			rs = ps.executeQuery();
+			String sqlString = String.format("select * from member where id=%d", id);
+			st = con.createStatement();
+			rs = st.executeQuery(sqlString);
 			rs.next();
-			
 			MemberVO m = new MemberVO();
 			m.setId(rs.getInt("id"));
 			m.setPass(rs.getString("pass"));
 			m.setName(rs.getString("name"));
 			m.setRegidate(rs.getDate("regidate"));
-
-			map.put("result", m);
-			map.put("msg", sqlstr);
-		}
-		catch(Exception e){
-			System.out.println("member 1명 조회 에러");
+			Map<String, Object> map = new HashMap<>();
+			map.put("sql", sqlString);
+			map.put("data", m);
+			return map;
+		} catch (Exception e) {
 			e.printStackTrace();
-			map.put("result", null);
-			map.put("msg", e.getMessage());
-		}
-		finally {
+		} finally {
 			try {
-				if(rs != null) rs.close();
-				if(st != null) ps.close();
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return map;
-	}
-
-	@Override
-	public Map<String, Object> addMember(MemberVO member) {
-		Map<String, Object> map = new HashMap<>();
-	
-		try {
-			int id = getNextId();
-			String query = String.format("insert into member(id,pass,name) values(%d,'%s','%s')", id,member.getPass(),member.getName());
-			st = con.createStatement();
-			st.executeUpdate(query);
-			
-			map.put("result", getMember(id));
-			map.put("msg", query);
-		}
-		catch(Exception e){
-			System.out.println("member 추가 에러");
-			e.printStackTrace();
-		}
-		finally {
-			try {
-				rs.close();
-				ps.close();
-			}
-			catch (Exception e) {
+				if (rs != null)	rs.close();
+				if (st != null)	st.close();
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
 		return null;
 	}
-
+	
 	private int getNextId() {
+		Statement st = null;
+		ResultSet rs = null;
 		try {
 			st = con.createStatement();
 			rs = st.executeQuery("select max(id) from member");
 			rs.next();
 			return rs.getInt(1) + 1;
-		}
-		catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		finally {
+		} finally {
 			try {
-				rs.close();
-				st.close();
-			}
-			catch (Exception e) {
+				if (rs != null)	rs.close();
+				if (st != null)	st.close();
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
-		return 1;
+		return 1;		
 	}
-
+	
 	@Override
-	public MemberVO updateMember(MemberVO member) {
+	public Map<String, Object> addMember(MemberVO member) {
+		
+		int id = getNextId();
+		
+		Statement st = null;
 		try {
-			ps = con.prepareStatement("update member set name=?, pass=? where id=?");
-			ps.setString(1, member.getName());
-			ps.setString(2, member.getPass());
-			ps.setInt(3, member.getId());
-			ps.executeUpdate();
-			
-			//return getMember(member.getId());
-		}
-		catch(Exception e){
-			System.out.println("member 변경 에러");
-			e.printStackTrace();
-		}
-		finally {
-			try {
-				rs.close();
-				ps.close();
+			String sqlString = String.format("insert into member (id,name,pass,regidate) values (%d,'%s','%s','%s')",
+				id, member.getName(), member.getPass(), new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
+			st = con.createStatement();
+
+			Map<String, Object> ret = new HashMap<>();
+			if (st.executeUpdate(sqlString) == 1) {
+				Map<String, Object> map = getMember(id);
+				ret.put("sql", sqlString);
+				ret.put("data", map.get("data"));
 			}
-			catch (Exception e) {
+			else {
+				ret.put("sql", sqlString);
+				ret.put("data", null);
+			}
+			return ret;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (st != null)	st.close();
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
@@ -184,28 +150,67 @@ public class MemberDaoH2Impl implements MemberInterface {
 	}
 
 	@Override
-	public boolean deleteMember(Integer id) {
+	public Map<String, Object> updateMember(MemberVO member) {
+		Statement st = null;
 		try {
-			ps = con.prepareStatement("delete from member where id=?");
-			ps.setInt(1, id);
-			if (ps.executeUpdate() == 1) {
-				return true;
+			String sqlString = String.format("update member set name='%s',pass='%s' where id=%d",
+					member.getName(), member.getPass(), member.getId());
+			st = con.createStatement();
+			
+			Map<String, Object> ret = new HashMap<>();
+			if (st.executeUpdate(sqlString) == 1) {
+				Map<String, Object> map = getMember(member.getId());
+				ret.put("sql", sqlString);
+				ret.put("data", map.get("data"));
 			}
-		}
-		catch(Exception e){
-			System.out.println("member 삭제 에러");
+			else {
+				ret.put("sql", sqlString);
+				ret.put("data", null);
+			}
+			return ret;
+		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		finally {
+		} finally {
 			try {
-				rs.close();
-				ps.close();
-			}
-			catch (Exception e) {
+				if (st != null)	st.close();
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
-		return false;
+		return null;
+	}
+
+	@Override
+	public Map<String, Object> deleteMember(Integer id) {
+		Statement st = null;
+		try {
+			String sqlString = String.format("delete from member where id=%d", id);
+			st = con.createStatement();
+
+			Map<String, Object> map = getMember(id);
+			if (map.get("data") == null) 
+				return null;
+
+			Map<String, Object> ret = new HashMap<>();
+			if (st.executeUpdate(sqlString) == 1) {
+				ret.put("sql", sqlString);
+				ret.put("data", map.get("data"));
+			}
+			else {
+				ret.put("sql", sqlString);
+				ret.put("data", null);
+			}
+			return ret;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (st != null)	st.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
 	}
 
 }

@@ -1,21 +1,19 @@
 package edu.pnu.dao.log;
 
-import java.util.List;
-
-import edu.pnu.domain.MemberVO;
+import java.io.File;
+import java.io.FileWriter;
 
 public class LogDaoFileImpl implements LogDao {
-
+	
 	@Override
-	public void addLog(String method, String sql, boolean success) {
-		// TODO Auto-generated method stub
-		
+	public void addLog(String method, String sqlstring, boolean success) {
+		try {
+			File file = new File("log.txt");
+			FileWriter fw = new FileWriter(file, true);
+			fw.write(method + "," + sqlstring + "," + success + "\n");
+			fw.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-
-	@Override
-	public void addLog(String method, String msg, Object obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

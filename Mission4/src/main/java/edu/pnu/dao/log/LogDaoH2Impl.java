@@ -1,62 +1,43 @@
 package edu.pnu.dao.log;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.List;
+import java.sql.SQLException;
 
-import edu.pnu.domain.MemberVO;
-
-public class LogDaoH2Impl implements LogDao{
-	public Connection con;
-	public PreparedStatement ps;
-	public ResultSet rs;
-
+public class LogDaoH2Impl implements LogDao {
+	private Connection con = null;
+	
 	public LogDaoH2Impl() {
-		try {
-			Class.forName("org.h2.Driver");
-			con = DriverManager.getConnection("jdbc:h2:tcp://localhost/~/springboot", "sa", "");
-			
-			System.out.println("DB 연결 성공(기본 생성자)");
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
+        try {
+            // JDBC 드라이버 로드
+            Class.forName("org.h2.Driver");
+            
+            con = DriverManager.getConnection("jdbc:h2:tcp://localhost/~/springboot", "sa", "");
+        }
+        catch (Exception e) {            
+            e.printStackTrace();
+        }
 	}
 
 	@Override
-	public void addLog(String method, String sql, boolean success) {
+	public void addLog(String method, String sqlstring, boolean success) {
+		
+		PreparedStatement psmt = null;
 		try {
-			ps = con.prepareStatement("insert into dblog(method,sqlstring,success) values(?,?,?)");
-			ps.setString(1, method);
-			ps.setString(2, sql);
-			ps.setBoolean(3, success);
-			
-			ps.executeUpdate();
-			
-		}
-		catch(Exception e){
-			System.out.println("log 추가 에러");
+			psmt = con.prepareStatement("insert into dblog (method,sqlstring,success) values (?,?,?)");
+			psmt.setString(1,  method);
+			psmt.setString(2, sqlstring);
+			psmt.setBoolean(3,  success);
+			psmt.executeUpdate();
+		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		finally {
+		} finally {
 			try {
-				if (rs != null) rs.close();
-				if (ps != null) ps.close();
-			}
-			catch (Exception e) {
+				psmt.close();
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
-		return;
 	}
-
-	@Override
-	public void addLog(String method, String msg, Object obj) {
-		addLog(method, msg, obj!=null?true:false);
-	}
-	
-	
 }

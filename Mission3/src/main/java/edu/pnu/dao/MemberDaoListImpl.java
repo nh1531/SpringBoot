@@ -4,43 +4,46 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
 import edu.pnu.domain.MemberVO;
 
 public class MemberDaoListImpl implements MemberInterface {
-	List<MemberVO> list = new ArrayList<>();
-
+	private List<MemberVO> list;
+	
 	public MemberDaoListImpl() {
-		for(int i = 1; i <= 5; i++) {
-			MemberVO member = new MemberVO();
-			member.setId(i);
-			member.setPass("pass" + i);
-			member.setName("name" + i);
-			member.setRegidate(new Date());
-			list.add(member);
-		}
+		list = new ArrayList<>();
+		for (int i = 1 ; i < 21 ; i++) {
+			list.add(new MemberVO(i, "1234", "이름"+i, new Date()));
+		}	
 	}
 	
-	public List<MemberVO> getMembers(){
+	@Override
+	public List<MemberVO> getMembers() {
 		return list;
 	}
-	
+
+	@Override
 	public MemberVO getMember(Integer id) {
 		for (MemberVO m : list) {
-			if(m.getId() == id)
+			if (m.getId() == id)
 				return m;
 		}
 		return null;
 	}
 	
-	public MemberVO addMember(MemberVO member) {
-		int id = member.getId();
-		String pass = member.getPass();
-		String name = member.getName();
-		MemberVO m = new MemberVO(id, pass, name, new Date());
-		list.add(member);
-		return m;
+	private int getNextId() {
+		return list.size() + 1;
 	}
 	
+	@Override
+	public MemberVO addMember(MemberVO member) {
+		member.setId(getNextId());
+		member.setRegidate(new Date());
+		return member;
+	}
+
+	@Override
 	public MemberVO updateMember(MemberVO member) {
 		for (MemberVO m : list) {
 			if (m.getId() == member.getId()) {
@@ -51,14 +54,16 @@ public class MemberDaoListImpl implements MemberInterface {
 		}
 		return null;
 	}
-	
-	public boolean deleteMember(Integer id) {
+
+	@Override
+	public int deleteMember(Integer id) {
 		for (MemberVO m : list) {
 			if (m.getId() == id) {
 				list.remove(m);
-				return true;
+				return 1;
 			}
 		}
-		return false;
+		return 0;
 	}
+
 }

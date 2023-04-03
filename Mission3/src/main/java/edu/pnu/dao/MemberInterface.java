@@ -14,6 +14,6 @@ public interface MemberInterface {
 
 	MemberVO updateMember(MemberVO member);
 
-	boolean deleteMember(Integer id);
+	int deleteMember(Integer id);
 
 }
