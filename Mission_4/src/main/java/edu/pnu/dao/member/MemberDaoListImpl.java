@@ -26,15 +26,15 @@ public class MemberDaoListImpl implements MemberInterface {
 	}
 
 	@Override
-	public MemberVO updateMember(MemberVO member) {
+	public Map<String, Object> updateMember(MemberVO member) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public boolean deleteMember(Integer id) {
+	public Map<String, Object> deleteMember(Integer id) {
 		// TODO Auto-generated method stub
-		return false;
+		return null;
 	}
 
 }

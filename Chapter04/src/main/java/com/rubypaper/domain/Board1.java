@@ -11,8 +11,14 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 
+// builder를 넣으면 allargs, noargs 있어야 함
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name="BoardJPA1")
 // persistence.xml <class>명 Board1
