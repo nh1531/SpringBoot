@@ -157,7 +157,7 @@ public class MemberDaoH2Impl implements MemberInterface {
 	}
 
 	@Override
-	public MemberVO updateMember(MemberVO member) {
+	public Map<String, Object> updateMember(MemberVO member) {
 		try {
 			ps = con.prepareStatement("update member set name=?, pass=? where id=?");
 			ps.setString(1, member.getName());
