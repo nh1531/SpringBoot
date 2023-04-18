@@ -24,7 +24,7 @@ public class BoardController {
 	@GetMapping("/getBoardList")
 	public void getBoardList(Model model, Board board) {
 		
-		model.addAttribute("boardlist", boardlist)
+		//model.addAttribute("boardlist", boardlist);
 		// return "getBoardList"; // mapping url이랑 return url.html/jsp 이 같으면 void하면 자동 호출 
 	}
 	
