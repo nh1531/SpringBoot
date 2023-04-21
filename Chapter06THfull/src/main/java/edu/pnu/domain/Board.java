@@ -27,9 +27,9 @@ public class Board {
 	private String title;
 	private String content;
 	private String writer;
-	@Column(columnDefinition = "date default now()")
+	@Column(insertable = false, updatable = false, columnDefinition = "date default now()")
 	private Date createDate;
-	@Column(columnDefinition = "number default 0")
+	@Column(insertable = false, updatable = false, columnDefinition = "number default 0")
 	private Long cnt;
 
 }
